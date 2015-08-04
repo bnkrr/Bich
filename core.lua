@@ -1,30 +1,10 @@
 local addon, ns = ...
 local cfg = ns.cfg
+local Bich = ns.Bich
 
--- class(table) Bich
-Bich = {}
-
-function Bich:getCreatureIdByGuid(guid)
-    local utype, _, server, instance, zone, id, suid = strsplit("-", guid)
-    if utype == "Creature" then
-        return tonumber(id)
-    else
-        return -1
-    end
-end
-
-function Bich:getSpellIdByEvent()
-end
-
-function Bich:addSpell(id, spellid)
-end
-
-function Bich:getAllSpell()
-end
-
-
+-- initial
 local function initAddon()
---初始化
+
     DEFAULT_CHAT_FRAME:AddMessage("Bich reloaded", 255, 255, 255)
 end
 
@@ -34,22 +14,48 @@ local function handlerAddonLoaded(name)
     end
 end
 
-local function handlerTargetChanged(caurse)
---更新显示信息
-end
 
+-- store spell information
 local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, 
                                 sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
---存储新信息
+
     if event == "SPELL_HEAL" or event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" then
         local spellid = select(1,...)
         local unitid = Bich:getCreatureIdByGuid(sourceGUID)
+        local zone = Bich:getZone()
+        Bich:addSpell(zone, unitid, spellid)
+        Bich:setName(zone, unitid, sourceName)
+        
+        
         if unitid ~= -1 then
             DEFAULT_CHAT_FRAME:AddMessage(sourceName .. " spell: " .. GetSpellLink(spellid), 255, 255, 255)
         end
     end
 end
 
+
+
+-- show spells stored before
+local function handlerTargetChanged(cause)
+    if UnitGUID("target") == nil then
+        return
+    end
+    local unitid = Bich:getCreatureIdByGuid(UnitGUID("target"))
+    local zone = Bich:getZone()
+    local info = Bich:getAllInfo(zone, unitid)
+    if info.spells ~= nil then
+        local name = UnitName("target")
+        Bich:setName(zone, unitid, name)
+        DEFAULT_CHAT_FRAME:AddMessage(name .. "'s spells:", 255, 255, 255)
+        local msg = ""
+        for spellid, _ in pairs(info.spells) do
+            msg = msg .. GetSpellLink(spellid)
+        end
+        DEFAULT_CHAT_FRAME:AddMessage(msg, 255, 255, 255)
+    end
+end
+
+--event handler
 local function onEvent(this, event, ...)
     if cfg.enable then
         if event == "COMBAT_LOG_EVENT_UNFILTERED" then
