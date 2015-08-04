@@ -1,0 +1,12 @@
+## Title: Bich
+## Notes: Mobs' Ability Tracker
+## Author: Bnkr, Inspired by Footrot/Sargeant
+
+## Interface: 60200
+## Version: 0.1
+## SavedVariables: BichDB
+
+config.lua
+core.lua
+
+
