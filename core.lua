@@ -4,8 +4,8 @@ local Bich = ns.Bich
 
 -- initial
 local function initAddon()
-
     DEFAULT_CHAT_FRAME:AddMessage("Bich reloaded", 255, 255, 255)
+    ns.loaded = true
 end
 
 local function handlerAddonLoaded(name)
@@ -56,8 +56,10 @@ local function handlerTargetChanged(cause)
 end
 
 --event handler
-local function onEvent(this, event, ...)
-    if cfg.enable then
+local frame = CreateFrame("Frame")
+
+function frame:onEvent(event, ...)
+    if ns.loaded and cfg.enable then
         if event == "COMBAT_LOG_EVENT_UNFILTERED" then
             handlerCombatLog(...)
         elseif event == "PLAYER_TARGET_CHANGED" then
@@ -68,9 +70,7 @@ local function onEvent(this, event, ...)
     end
 end
 
-local frame = CreateFrame("Frame")
 frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", onEvent)
-frame:Show()
+frame:SetScript("OnEvent", frame.onEvent)
