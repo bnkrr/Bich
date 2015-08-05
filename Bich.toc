@@ -7,5 +7,6 @@
 ## SavedVariables: BichDB
 
 config.lua
-class.lua
+db.lua
+bar.lua
 core.lua
