@@ -40,7 +40,7 @@ end
 
 
 -- show spells stored before
-local function handlerTargetChanged(cause)
+local function handlerTargetChanged()
     if UnitGUID("target") == nil or not Bich:checkZone(fcfg.show) then   --当前区域不显示，或者目标不可用
         BichBar:hideAllButtons()
         return
@@ -79,8 +79,8 @@ function frame:onEvent(event, ...)
         if ns.loaded then
             if event == "COMBAT_LOG_EVENT_UNFILTERED" then
                 handlerCombatLog(...)
-            elseif event == "PLAYER_TARGET_CHANGED" then
-                handlerTargetChanged(...)
+            elseif event == "PLAYER_TARGET_CHANGED" or event == "ZONE_CHANGED_NEW_AREA" then
+                handlerTargetChanged()       
             elseif event == "PLAYER_LOGOUT" then
                 handlerPlayerLogout()
             end
@@ -94,6 +94,7 @@ frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGOUT")
+frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 frame:SetScript("OnEvent", frame.onEvent)
 
 
