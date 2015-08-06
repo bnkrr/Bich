@@ -1,43 +1,94 @@
 local addon, ns = ...
-local cfg = ns.cfg
+local bcfg = ns.cfg.barConfig
 
 
 local BichBar = CreateFrame("Frame", "BichSpellBar", UIParent)
 
-function BichBar:addButton(spellid,i)
 
-    local button = CreateFrame("Button", "BichSpellButton_"..tostring(i), self)
-    local _, _, img = GetSpellInfo(spellid)
-    
-    button:SetWidth(32)
-    button:SetHeight(32)
-    button:SetPoint("CENTER", self, "CENTER", 34*(i-1), 0)
-    
-    button.spellIcon = button:CreateTexture(nil, "ARTWORK")
-    button.spellIcon:SetAllPoints(button)
-    button.spellIcon:SetTexture(img)
-    --button.spellImage:Show()
-    button:Show()
+function BichBar:init()
+    self:SetWidth(200)
+    self:SetHeight(50)
+    self:SetPoint(bcfg.anchor, bcfg.relative.frame, bcfg.relative.anchor, bcfg.position.x, bcfg.position.y)
+    self.buttons = {}
+end
+
+
+function BichBar:hideAllButtons()
+    for i, button in ipairs(self.buttons) do
+        button:Hide()
+    end
+end
+
+function BichBar:createAndSetButton(spellid, i)
+    local button = self:createButton(i)
+    button:setButton(spellid)
     return button
 end
 
-function BichBar:createBar(spells)
-    
-    self:SetWidth(200)
-    self:SetHeight(36)
-    self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    
-    self.buttons = {}
-    
-    for spellid, _ in pairs(spells) do
-        local button = self:addButton(spellid, #self.buttons+1)
-        table.insert(self.buttons, button)
-    end
 
-    -- self:Show()
-    -- for i, button in ipairs(self.buttons) do
-        -- button:Show()
-    -- end
+function BichBar:createButton(i)
+    local button = CreateFrame("Button", "BichSpellButton_"..tostring(i), self)
+    if bcfg.perRow ~= nil then
+        local r = math.floor((i-1)/bcfg.perRow)
+        local c = math.fmod(i-1,bcfg.perRow)
+    else
+        local r, c = 0, i-1
+    end
+    button:SetWidth(bcfg.button.width)
+    button:SetHeight(bcfg.button.height)
+    button:SetPoint("TOP", self, "TOP", 
+                      (bcfg.button.width +bcfg.button.margin)*(c-(bcfg.perRow-1)/2),
+                     -(bcfg.button.height+bcfg.button.margin)* r
+                   )
+    button.spellIcon = button:CreateTexture(nil, "ARTWORK")
+    button.spellIcon:SetAllPoints(self)
+    
+    function button:setButton(spellid)
+        local _, _, image = GetSpellInfo(spellid)
+        self.spellIcon:SetTexture(image)
+        --self.hyperlink = GetSpellLink(spellid)
+        self.spellid = spellid
+        self:Show()
+    end
+    
+    function button:onEnter()
+        GameTooltip_SetDefaultAnchor(GameTooltip, self)
+        --GameTooltip:SetHyperlink(self.hyperlink)
+        GameTooltip:SetSpellByID(self.spellid)
+        GameTooltip:Show()
+    end
+    
+    function button:onLeave()
+        GameTooltip:FadeOut()
+    end
+    
+    button:SetScript("OnEnter", button.onEnter)
+    button:SetScript("OnLeave", button.onLeave)
+    return button
 end
 
+
+function BichBar:addButton(spellid,i)
+    if i > #self.buttons then
+        local button = self:createAndSetButton(spellid, i)
+        table.insert(self.buttons, button)
+    else
+        local button = self.buttons[i]
+        button:setButton(spellid)
+    end
+end
+
+
+
+function BichBar:createBar(spells)
+    self:hideAllButtons()
+    
+    local i = 1
+    for spellid, _ in pairs(spells) do
+        self:addButton(spellid, i)
+        i = i + 1
+    end
+end
+
+BichBar:init()
 ns.BichBar = BichBar

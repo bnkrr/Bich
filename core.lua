@@ -1,5 +1,6 @@
 local addon, ns = ...
-local cfg = ns.cfg
+local gEnable = ns.cfg.enable
+local fcfg = ns.cfg.filterConfig
 local Bich = ns.Bich
 local BichBar = ns.BichBar
 
@@ -20,6 +21,10 @@ end
 local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, 
                                 sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
 
+    if not Bich:checkZone(fcfg.track) then
+        return
+    end
+    
     if event == "SPELL_HEAL" or event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" then
         local spellid = select(1, ...)
         local unitid = Bich:getCreatureIdByGuid(sourceGUID)
@@ -36,7 +41,7 @@ end
 
 -- show spells stored before
 local function handlerTargetChanged(cause)
-    if UnitGUID("target") == nil then
+    if UnitGUID("target") == nil or not Bich:checkZone(fcfg.show) then   --当前区域不显示，或者目标不可用
         return
     end
     local unitid = Bich:getCreatureIdByGuid(UnitGUID("target"))
@@ -53,20 +58,29 @@ local function handlerTargetChanged(cause)
         BichBar:createBar(info.spells)
         DEFAULT_CHAT_FRAME:AddMessage(msg, 255, 255, 255)
     end
-    
-    --Bich:getZone()
+end
+
+-- save BichDB after logout
+local function handlerPlayerLogout()
+    for zone, _ in pairs(BichDB) do
+        if not BichDB:checkZone(fcfg.save, zone) then
+            BichDB[zone] = nil
+        end
+    end
 end
 
 --event handler
 local frame = CreateFrame("Frame")
 
 function frame:onEvent(event, ...)
-    if cfg.enable then
+    if gEnable then
         if ns.loaded then
             if event == "COMBAT_LOG_EVENT_UNFILTERED" then
                 handlerCombatLog(...)
             elseif event == "PLAYER_TARGET_CHANGED" then
                 handlerTargetChanged(...)
+            elseif event == "PLAYER_LOGOUT" then
+                handlerPlayerLogout()
             end
         elseif event == "ADDON_LOADED" then
             handlerAddonLoaded(...)
@@ -77,4 +91,16 @@ end
 frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 frame:RegisterEvent("ADDON_LOADED")
+frame:RegisterEvent("PLAYER_LOGOUT")
 frame:SetScript("OnEvent", frame.onEvent)
+
+
+-- slash commands
+SLASH_BICH_RELOADER1 = "/rl"
+SlashCmdList.BICH_RELOADER = function() ReloadUI() end
+
+SLASH_BICH_GLOBAL1 = "/bichglobal"
+SLASH_BICH_GLOBAL2 = "/bi"
+SlashCmdList.BICH_GLOBAL = function() _G["Bich"] = Bich end
+
+

@@ -1,4 +1,4 @@
-## Title: Bich
+## Title: Bich, the Spell Tracker
 ## Notes: Mobs' Ability Tracker
 ## Author: Bnkr, Inspired by Footrot/Sargeant
 
