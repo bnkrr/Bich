@@ -21,7 +21,7 @@ barConfig.relative = {
 
 barConfig.anchor = "CENTER"
 
-barConfig.perRow = nil,
+barConfig.perRow = nil
 
 -- 图标大小
 barConfig.button = {

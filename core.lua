@@ -32,7 +32,7 @@ local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, source
         
         if unitid > 0 then
             Bich:addSpellAndSetName(zone, zoneName, unitid, sourceName, spellid)
-            DEFAULT_CHAT_FRAME:AddMessage(sourceName .. " spell: " .. GetSpellLink(spellid), 255, 255, 255)
+            --DEFAULT_CHAT_FRAME:AddMessage(sourceName .. " spell: " .. GetSpellLink(spellid), 255, 255, 255)
         end
     end
 end
@@ -42,6 +42,7 @@ end
 -- show spells stored before
 local function handlerTargetChanged(cause)
     if UnitGUID("target") == nil or not Bich:checkZone(fcfg.show) then   --当前区域不显示，或者目标不可用
+        BichBar:hideAllButtons()
         return
     end
     local unitid = Bich:getCreatureIdByGuid(UnitGUID("target"))
@@ -50,13 +51,14 @@ local function handlerTargetChanged(cause)
     if info.spells ~= nil then
         local name = UnitName("target")
         Bich:setCreatureName(zone, unitid, name)
-        DEFAULT_CHAT_FRAME:AddMessage(name .. "'s spells:", 255, 255, 255)
-        local msg = ""
-        for spellid, _ in pairs(info.spells) do
-            msg = msg .. GetSpellLink(spellid)
-        end
         BichBar:createBar(info.spells)
-        DEFAULT_CHAT_FRAME:AddMessage(msg, 255, 255, 255)
+        
+        -- DEFAULT_CHAT_FRAME:AddMessage(name .. "'s spells:", 255, 255, 255)
+        -- local msg = ""
+        -- for spellid, _ in pairs(info.spells) do
+            -- msg = msg .. GetSpellLink(spellid)
+        -- end
+        -- DEFAULT_CHAT_FRAME:AddMessage(msg, 255, 255, 255)
     end
 end
 
@@ -101,6 +103,6 @@ SlashCmdList.BICH_RELOADER = function() ReloadUI() end
 
 SLASH_BICH_GLOBAL1 = "/bichglobal"
 SLASH_BICH_GLOBAL2 = "/bi"
-SlashCmdList.BICH_GLOBAL = function() _G["Bich"] = Bich end
+SlashCmdList.BICH_GLOBAL = function() _G["Bich"] = Bich   _G["bcfg"] = ns.cfg end
 
 

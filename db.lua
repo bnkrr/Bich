@@ -25,7 +25,7 @@ local Bich = {
         --[19] = "Event",
         --[20] = "Event Scenario",
         [23] = "Mythic (Dungeons)",
-    }
+    },
     
     instanceCategory = {
         [0] = "None",
@@ -48,7 +48,7 @@ local Bich = {
         --[19] = "Event",
         --[20] = "Event Scenario",
         [23] = "Dungeon",
-    }
+    },
 }
 
 function Bich:getCreatureIdByGuid(guid)
@@ -81,7 +81,7 @@ end
 -- 检查当前区域是否满足条件
 function Bich:checkZone(filter, zone)
     zone = zone or self:getZone()
-    local difficultyID = select(2,strsplit("_", zone))
+    local difficultyID = tonumber(select(2,strsplit("_", zone)))
     local category = self.instanceCategory[difficultyID]
     if category == nil then
         return false

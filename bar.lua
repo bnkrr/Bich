@@ -28,20 +28,19 @@ end
 
 function BichBar:createButton(i)
     local button = CreateFrame("Button", "BichSpellButton_"..tostring(i), self)
+    local r, c = 0, i-1
     if bcfg.perRow ~= nil then
-        local r = math.floor((i-1)/bcfg.perRow)
-        local c = math.fmod(i-1,bcfg.perRow)
-    else
-        local r, c = 0, i-1
+        r = math.floor((i-1)/bcfg.perRow)
+        c = math.fmod(i-1,bcfg.perRow)
     end
     button:SetWidth(bcfg.button.width)
     button:SetHeight(bcfg.button.height)
-    button:SetPoint("TOP", self, "TOP", 
-                      (bcfg.button.width +bcfg.button.margin)*(c-(bcfg.perRow-1)/2),
-                     -(bcfg.button.height+bcfg.button.margin)* r
+    button:SetPoint("TOPLEFT", self, "TOPLEFT", 
+                      (bcfg.button.width +bcfg.button.margin)*c,--(bcfg.button.width +bcfg.button.margin)*(c-(bcfg.perRow-1)/2),
+                     -(bcfg.button.height+bcfg.button.margin)*r
                    )
     button.spellIcon = button:CreateTexture(nil, "ARTWORK")
-    button.spellIcon:SetAllPoints(self)
+    button.spellIcon:SetAllPoints(button)
     
     function button:setButton(spellid)
         local _, _, image = GetSpellInfo(spellid)
