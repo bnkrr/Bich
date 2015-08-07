@@ -11,7 +11,7 @@ cfg.enable = true
 
 barConfig.position = {
     x = 0,
-    y = 0,
+    y = -180,
 }
 
 barConfig.relative = {
@@ -25,9 +25,9 @@ barConfig.perRow = nil
 
 -- 图标大小
 barConfig.button = {
-    height = 32,
-    width = 32,
-    margin = 2,
+    height = 36,
+    width = 36,
+    margin = 4,
 }
 
 

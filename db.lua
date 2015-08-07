@@ -53,7 +53,7 @@ local Bich = {
 
 function Bich:getCreatureIdByGuid(guid)
     local utype, _, server, instance, zone, id, suid = strsplit("-", guid)
-    if utype == "Creature" then
+    if utype == "Creature" or utype == "Vehicle" then
         return tonumber(id)
     else
         return -1
@@ -104,7 +104,12 @@ function Bich:addSpellAndSetName(zone, zoneName, unitid, unitName, spellid)
     end
     BichDB[zone].name = zoneName
     BichDB[zone][unitid].name = unitName
-    BichDB[zone][unitid].spells[spellid] = true
+    if BichDB[zone][unitid].spells[spellid] then
+        return false
+    else
+        BichDB[zone][unitid].spells[spellid] = true
+        return true
+    end
 end
 
 
@@ -120,7 +125,12 @@ function Bich:addSpell(zone, unitid, spellid)
     if BichDB[zone][unitid].spells == nil then
         BichDB[zone][unitid].spells = {}
     end
-    BichDB[zone][unitid].spells[spellid] = true
+    if BichDB[zone][unitid].spells[spellid] then
+        return false
+    else
+        BichDB[zone][unitid].spells[spellid] = true
+        return true
+    end
 end
 
 function Bich:setZoneName(zone, name)

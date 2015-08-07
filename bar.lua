@@ -10,10 +10,12 @@ function BichBar:init()
     self:SetHeight(50)
     self:SetPoint(bcfg.anchor, bcfg.relative.frame, bcfg.relative.anchor, bcfg.position.x, bcfg.position.y)
     self.buttons = {}
+    self.buttonCount = 0
 end
 
 
 function BichBar:hideAllButtons()
+    self.buttonCount = 0
     for i, button in ipairs(self.buttons) do
         button:Hide()
     end
@@ -66,8 +68,8 @@ function BichBar:createButton(i)
     return button
 end
 
-
 function BichBar:addButton(spellid,i)
+    i = i or self.buttonCount+1
     if i > #self.buttons then
         local button = self:createAndSetButton(spellid, i)
         table.insert(self.buttons, button)
@@ -82,10 +84,9 @@ end
 function BichBar:createBar(spells)
     self:hideAllButtons()
     
-    local i = 1
     for spellid, _ in pairs(spells) do
-        self:addButton(spellid, i)
-        i = i + 1
+        self.buttonCount = self.buttonCount + 1
+        self:addButton(spellid, self.buttonCount)
     end
 end
 
