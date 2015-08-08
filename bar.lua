@@ -53,9 +53,12 @@ function BichBar:createButton(i)
     end
     
     function button:onEnter()
-        --GameTooltip_SetDefaultAnchor(GameTooltip, self)
+        if bcfg.tooltipAnchor == "ANCHOR_NONE" then
+            GameTooltip_SetDefaultAnchor(GameTooltip, self)
+        else
+            GameTooltip:SetOwner(self, bcfg.tooltipAnchor)
+        end
         --GameTooltip:SetHyperlink(self.hyperlink)
-        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
         GameTooltip:SetSpellByID(self.spellid)
         GameTooltip:Show()
     end
