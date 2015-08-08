@@ -1,3 +1,7 @@
+2015-08-08 15:34
+Arrange spells in order of spellid. Will makes the spell bar more reading-friendly in some situations.
+
+
 2015-08-08 14:10
 Change some some caption in the code.
 

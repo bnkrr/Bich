@@ -6,7 +6,7 @@ local BichBar = ns.BichBar
 
 -- initial
 local function initAddon()
-    DEFAULT_CHAT_FRAME:AddMessage("Bich loaded", 255, 255, 255)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff00bfffBich|r loaded", 255, 255, 255)
     ns.loaded = true
 end
 

@@ -84,7 +84,12 @@ end
 function BichBar:createBar(spells)
     self:hideAllButtons()
     
+    spellsort = {}
     for spellid, _ in pairs(spells) do
+        table.insert(spellsort, spellid)
+    end
+    table.sort(spellsort)
+    for i, spellid in ipairs(spellsort) do
         self.buttonCount = self.buttonCount + 1
         self:addButton(spellid, self.buttonCount)
     end
