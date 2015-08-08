@@ -3,17 +3,18 @@ local cfg = {}
 local barConfig = {}
 local filterConfig = {}
 
--- 总开关
+-- global enable
 cfg.enable = true
 
--- spellbar设置
---位置
 
+-- spellbar config
+-- spellbar position
 barConfig.position = {
     x = 0,
     y = -180,
 }
 
+-- spellbar relatives
 barConfig.relative = {
     frame = UIParent,
     anchor = "CENTER",
@@ -21,19 +22,18 @@ barConfig.relative = {
 
 barConfig.anchor = "CENTER"
 
+-- set nil to arrange every icon in one row
 barConfig.perRow = nil
 
--- 图标大小
+-- icon size
 barConfig.button = {
     height = 36,
     width = 36,
     margin = 4,
 }
 
-
-
---过滤器的设置
--- 记录位置
+-- filter config
+-- where to track the mobs' abilities
 filterConfig.track = {
     Dungeon = true,
     Raid = true,
@@ -41,6 +41,7 @@ filterConfig.track = {
     None = true,
 }
 
+-- where to show the bar of the mobs' abilities
 filterConfig.show = {
     Dungeon = nil,
     Raid = nil,
@@ -48,6 +49,7 @@ filterConfig.show = {
     None = nil,
 }
 
+-- where to save to local file when player logout
 filterConfig.save = {
     Dungeon = nil,
     Raid = nil,
@@ -55,7 +57,7 @@ filterConfig.save = {
     None = nil,
 }
 
--- 如果没有设置，则跟随track的设置
+-- if set nil, filterConfig.show and filterConfig.save will follow filterConfig.track
 for k, v in pairs(filterConfig.track) do
     if filterConfig.show[k] == nil then
         filterConfig.show[k] = v
@@ -65,7 +67,7 @@ for k, v in pairs(filterConfig.track) do
     end
 end
 
-
+-- do not touch~
 cfg.barConfig = barConfig
 cfg.filterConfig = filterConfig
 ns.cfg = cfg

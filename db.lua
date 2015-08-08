@@ -64,7 +64,7 @@ function Bich:getZone()
     --local mapId = GetCurrentMapAreaID()
     local name, _, difficultyID, _, _, _, _, instanceMapID = GetInstanceInfo()
     local suffix = "0"  --outside
-    if difficultyID ~= 0 then   --在地城中
+    if difficultyID ~= 0 then   --in instances
         if self.instanceType[difficultyID] ~= nil then
             suffix = tostring(difficultyID)
         else
@@ -72,13 +72,10 @@ function Bich:getZone()
         end
     end
     return tostring(instanceMapID) .. "_" .. suffix, name
-    --返回 mapId 和 map的名称
+    --return mapId and mapName
 end
---GetRealZoneText()得到真实名字
---GetZoneText()得到名字（在地城中会有问题）
---GetMapNameByID(mapId)从mapid得到地图名字
 
--- 检查当前区域是否满足条件
+-- check if the mob in this zone should be saved
 function Bich:checkZone(filter, zone)
     zone = zone or self:getZone()
     local difficultyID = tonumber(select(2,strsplit("_", zone)))

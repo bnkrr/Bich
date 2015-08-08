@@ -25,6 +25,7 @@ local function createBarTarget()
         Bich:setCreatureName(zone, unitid, name)
         BichBar:createBar(info.spells)
         
+        -- for debug
         -- DEFAULT_CHAT_FRAME:AddMessage(name .. "'s spells:", 255, 255, 255)
         -- local msg = ""
         -- for spellid, _ in pairs(info.spells) do
@@ -42,8 +43,6 @@ local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, source
     if not Bich:checkZone(fcfg.track) then
         return
     end
-    --local hl = tostring(select(2, ...)) or tostring(select(1, ...))
-    --DEFAULT_CHAT_FRAME:AddMessage((sourceName or "None") .. "  " .. (event or "None2") .. "  " .. (hl or "None3"), 255, 255, 255)
     if event == "SPELL_HEAL" or event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" then
         local spellid = select(1, ...)
         local unitid = Bich:getCreatureIdByGuid(sourceGUID)
@@ -54,7 +53,6 @@ local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, source
             if sourceGUID == UnitGUID("target") and newSpell then
                 createBarTarget()
             end
-            --DEFAULT_CHAT_FRAME:AddMessage(sourceName .. " spell: " .. GetSpellLink(spellid), 255, 255, 255)
         end
     end
 end
@@ -64,7 +62,7 @@ end
 -- show spells stored before
 local function handlerTargetChanged()
     BichBar:hideAllButtons()
-    if UnitGUID("target") == nil or not Bich:checkZone(fcfg.show) then   --当前区域不显示，或者目标不可用
+    if UnitGUID("target") == nil or not Bich:checkZone(fcfg.show) then   --target is nil or not shown in this zone
         return
     end
     createBarTarget()
@@ -110,10 +108,6 @@ frame:SetScript("OnEvent", frame.onEvent)
 SLASH_BICH_RELOADER1 = "/rl"
 SlashCmdList.BICH_RELOADER = function() ReloadUI() end
 
-SLASH_BICH_GLOBAL1 = "/bichglobal"
-SLASH_BICH_GLOBAL2 = "/bi"
-SlashCmdList.BICH_GLOBAL = function() _G["Bich"] = Bich   _G["bcfg"] = ns.cfg end
-
-SLASH_BICH_CLEARDB1 = "/clearbichdb"
-SLASH_BICH_CLEARDB2 = "/cb"
+SLASH_BICH_CLEARDB1 = "/bichcleardb"
+SLASH_BICH_CLEARDB2 = "/bclr"
 SlashCmdList.BICH_CLEARDB = function() _G["BichDB"] = {} end
