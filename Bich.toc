@@ -3,7 +3,7 @@
 ## Author: Bnkr, Inspired by Footrot/Sargeant
 
 ## Interface: 60200
-## Version: 0.3
+## Version: 0.4
 ## SavedVariables: BichDB
 
 config.lua

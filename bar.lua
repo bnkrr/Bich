@@ -53,8 +53,9 @@ function BichBar:createButton(i)
     end
     
     function button:onEnter()
-        GameTooltip_SetDefaultAnchor(GameTooltip, self)
+        --GameTooltip_SetDefaultAnchor(GameTooltip, self)
         --GameTooltip:SetHyperlink(self.hyperlink)
+        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
         GameTooltip:SetSpellByID(self.spellid)
         GameTooltip:Show()
     end
@@ -63,8 +64,16 @@ function BichBar:createButton(i)
         GameTooltip:FadeOut()
     end
     
+    
+    function button:onClick(buttonType)
+        if IsShiftKeyDown() and buttonType == "LeftButton" and ChatFrame1EditBox:IsVisible() then
+            ChatFrame1EditBox:Insert(GetSpellLink(self.spellid))
+        end
+    end
+    
     button:SetScript("OnEnter", button.onEnter)
     button:SetScript("OnLeave", button.onLeave)
+    button:SetScript("OnMouseDown", button.onClick)
     return button
 end
 
