@@ -8,8 +8,17 @@ Change: Arrange spells in order of spellid. Will makes the spell bar more readin
 
 
 2015-08-08 14:10
-Change: Change some some caption in the code.
+Change: Change some caption in the code.
 
 
 2015-08-07 14:13
 First Release, Enjoy it!
+
+
+---
+todo: add some useful functions to search in database
+todo: filter enemies and friendly NPC
+todo: add click behavior of spell to show ItemRefTooltip
+todo: add CD tracker
+todo: remove duplicate spells (though they have different spellids)
+todo: share spell information with others, API: SendAddonMessage()

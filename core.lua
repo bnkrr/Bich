@@ -6,6 +6,7 @@ local BichBar = ns.BichBar
 
 -- initial
 local function initAddon()
+    math.randomseed(os.time())
     DEFAULT_CHAT_FRAME:AddMessage("|cff00bfffBich|r loaded", 255, 255, 255)
     ns.loaded = true
 end
@@ -111,3 +112,24 @@ SlashCmdList.BICH_RELOADER = function() ReloadUI() end
 SLASH_BICH_CLEARDB1 = "/bichcleardb"
 SLASH_BICH_CLEARDB2 = "/bclr"
 SlashCmdList.BICH_CLEARDB = function() _G["BichDB"] = {} end
+
+SLASH_BICH_SEARCHDB1 = "/bichsearchdb"
+SLASH_BICH_SEARCHDB2 = "/bs"
+
+SlashCmdList.BICH_SEARCHDB = function(msg, editbox)
+    local cmd, param = msg:match("^(%S*)%s*(.-)$")
+    cmd = string.lower(cmd)
+    if cmd == "num" or cmd == "number" then
+        param = tonumber(param)
+        if param ~= nil then
+            BichBar:searchAndShowMoreThan(param)
+        end
+    elseif cmd == "mob" or cmd == "creature" then
+        param = tonumber(param)
+        if param ~= nil then
+            BichBar:searchAndShowByCreatureId(param)
+        end
+    elseif cmd == "name" then
+        BichBar:searchAndShowByName(param)
+    end
+end
