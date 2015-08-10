@@ -91,50 +91,42 @@ function BichBar:addButton(spellid,i)
     end
 end
 
+
 function BichBar:createBar(spells)
     self:hideAllButtons()
 
-    spellsort = {}
-    for spellid, _ in pairs(spells) do
-        table.insert(spellsort, spellid)
-    end
-    table.sort(spellsort)
-    for i, spellid in ipairs(spellsort) do
+    for i, spellid in ipairs(spells) do
         self.buttonCount = self.buttonCount + 1
         self:addButton(spellid, self.buttonCount)
     end
 end
 
---debug functions
-function BichBar:getSpellNum(info, id)
-    if type(info) == "string" and type(id) == "number" then
-        if BichDB[info] ~= nil then
-            info = BichDB[info][id]
-        else
-            return nil
-        end
+
+function BichBar:createBarUnit(flag)--"target"
+    local unitid = Bich:getCreatureIdByGuid(UnitGUID(flag))
+    local zone = Bich:getZone()
+    local spells = Bich:getFilteredSpellInfo(zone, unitid, "sort")
+    if next(spells) ~= nil then
+        local name = UnitName(flag)
+        Bich:setUnitName(unitid, name)
+        self:createBar(spells)
+        --  for debug
+        --BichBar:printMobInfoToChat({zone=zone, unitid=unitid, spells=spells})
     end
-    local count = 0
-    for spell, v in pairs(info) do
-        if v == true then
-            count = count + 1
-        end
-    end
-    return count
 end
+
+--debug functions
+
+
 function BichBar:printMobInfoToChat(mobInfo)
-    spellsort = {}
-    for spellid, _ in pairs(mobInfo.spells) do
-        table.insert(spellsort, spellid)
-    end
-    table.sort(spellsort)
+    local name = Bich:getUnitName(mobInfo.unitid)
     
     local msg = ""
     for i, spellid in ipairs(spellsort) do
         msg = msg .. GetSpellLink(spellid)
     end
 
-    DEFAULT_CHAT_FRAME:AddMessage(mobInfo.name .. ":" .. msg, 255, 255, 255)
+    DEFAULT_CHAT_FRAME:AddMessage(name .. ":" .. msg, 255, 255, 255)
 end
 
 function BichBar:printSearchResultToChat(limit)
@@ -146,46 +138,13 @@ function BichBar:printSearchResultToChat(limit)
     end
 end
 
-function BichBar:searchAndShowMoreThan(num)
-    self.searchResult = {}
-    for zone, zoneInfo in pairs(BichDB) do
-        for mob, mobInfo in pairs(zoneInfo) do
-            if type(mobInfo) == "table" and self:getSpellNum(mobInfo.spells) > num then
-                table.insert(self.searchResult, mobInfo)
-            end
-        end
+function BichBar:searchAndShow(cmd, param)
+    self.searchResult = Bich:search(cmd, param)
+    if #self.searchResult > 0 then
+        local randomChoosen = self.searchResult[ math.random(1,#self.searchResult) ]
+        self:createBar(randomChoosen.spells)
+        self:printSearchResultToChat()
     end
-    local randomChoosen = self.searchResult[ math.random(1,#self.searchResult) ]
-    self:createBar(randomChoosen.spells)
-    self:printSearchResultToChat()
-end
-
-function BichBar:searchAndShowByCreatureId(id)
-    self.searchResult = {}
-    for zone, zoneInfo in pairs(BichDB) do
-        for mob, mobInfo in pairs(zoneInfo) do
-            if type(mob) == "number" and mob == id then
-                table.insert(self.searchResult, mobInfo)
-            end
-        end
-    end
-    local randomChoosen = self.searchResult[ math.random(1,#self.searchResult) ]
-    self:createBar(randomChoosen.spells)
-    self:printSearchResultToChat()
-end
-
-function BichBar:searchAndShowByName(name)
-    self.searchResult = {}
-    for zone, zoneInfo in pairs(BichDB) do
-        for mob, mobInfo in pairs(zoneInfo) do
-            if type(mobInfo) == "table" and mobInfo.name == name then
-                table.insert(self.searchResult, mobInfo)
-            end
-        end
-    end
-    local randomChoosen = self.searchResult[ math.random(1,#self.searchResult) ]
-    self:createBar(randomChoosen.spells)
-    self:printSearchResultToChat()
 end
 
 BichBar:init()

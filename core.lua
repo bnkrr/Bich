@@ -8,31 +8,13 @@ local BichBar = ns.BichBar
 local function initAddon()
     math.randomseed(os.time())
     DEFAULT_CHAT_FRAME:AddMessage("|cff00bfffBich|r loaded", 255, 255, 255)
+    Bich:checkVersion() -- check database version
     ns.loaded = true
 end
 
 local function handlerAddonLoaded(name)
     if name == "Bich" then
         initAddon()
-    end
-end
-
-local function createBarTarget()
-    local unitid = Bich:getCreatureIdByGuid(UnitGUID("target"))
-    local zone = Bich:getZone()
-    local info = Bich:getAllInfo(zone, unitid)
-    if info.spells ~= nil then
-        local name = UnitName("target")
-        Bich:setCreatureName(zone, unitid, name)
-        BichBar:createBar(info.spells)
-        
-        -- for debug
-        -- DEFAULT_CHAT_FRAME:AddMessage(name .. "'s spells:", 255, 255, 255)
-        -- local msg = ""
-        -- for spellid, _ in pairs(info.spells) do
-            -- msg = msg .. GetSpellLink(spellid)
-        -- end
-        -- DEFAULT_CHAT_FRAME:AddMessage(msg, 255, 255, 255)
     end
 end
 
@@ -51,13 +33,12 @@ local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, source
         
         if unitid > 0 then
             local newSpell = Bich:addSpellAndSetName(zone, zoneName, unitid, sourceName, spellid)
-            if sourceGUID == UnitGUID("target") and newSpell then
-                createBarTarget()
+            if unitid == Bich:getCreatureIdByGuid(UnitGUID("target")) and newSpell then
+                BichBar:createBarUnit("target")
             end
         end
     end
 end
-
 
 
 -- show spells stored before
@@ -66,14 +47,19 @@ local function handlerTargetChanged()
     if UnitGUID("target") == nil or not Bich:checkZone(fcfg.show) then   --target is nil or not shown in this zone
         return
     end
-    createBarTarget()
+    BichBar:createBarUnit("target")
 end
 
 -- save BichDB after logout
 local function handlerPlayerLogout()
     for zone, _ in pairs(BichDB) do
-        if not BichDB:checkZone(fcfg.save, zone) then
+        if not Bich:checkZone(fcfg.save, zone) then
             BichDB[zone] = nil
+        end
+    end
+    for zone, _ in pairs(BichAddition.zone) do
+        if not Bich:checkZone(fcfg.save, zone) then
+            BichAddition.zone[zone] = nil
         end
     end
 end
@@ -121,15 +107,15 @@ SlashCmdList.BICH_SEARCHDB = function(msg, editbox)
     cmd = string.lower(cmd)
     if cmd == "num" or cmd == "number" then
         param = tonumber(param)
-        if param ~= nil then
-            BichBar:searchAndShowMoreThan(param)
-        end
-    elseif cmd == "mob" or cmd == "creature" then
+    elseif cmd == "mob" or cmd == "creature" or cmd == "unit" then
         param = tonumber(param)
-        if param ~= nil then
-            BichBar:searchAndShowByCreatureId(param)
-        end
-    elseif cmd == "name" then
-        BichBar:searchAndShowByName(param)
+    -- elseif cmd == "name" then
+        -- do nothing
+    end
+    if param ~= nil then
+        BichBar:searchAndShow(cmd, param)
+    else
+        DEFAULT_CHAT_FRAME:AddMessage("Wrong parameters!", 255, 255, 255)
+        DEFAULT_CHAT_FRAME:AddMessage("/bs num|unit|name param", 255, 255, 255)
     end
 end

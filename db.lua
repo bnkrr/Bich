@@ -1,8 +1,9 @@
--- class(table) Bich
+-- database functions, method: class Bich, data: BichDB, BichAddition
 local addon, ns = ...
+local BichSpellFilter = ns.BichSpellFilter
 
-BichDB = BichDB or {}
-
+BichDB = BichDB or {}       -- only store spell info
+BichDBVersion = 1     -- BichAddition save creature id, names, zone names, zone id
 local Bich = {
     instanceType = {
         [0] = "None",
@@ -51,6 +52,18 @@ local Bich = {
     },
 }
 
+function Bich:checkVersion()
+    if BichAddition == nil or BichAddition.version != BichDBVersion then
+        BichDB = {}
+        BichAddition = { 
+            version = BichDBVersion,
+            unit = {}, 
+            zone = {},
+        }
+    end
+end
+
+
 function Bich:getCreatureIdByGuid(guid)
     local utype, _, server, instance, zone, id, suid = strsplit("-", guid)
     if utype == "Creature" or utype == "Vehicle" then
@@ -90,27 +103,10 @@ function Bich:checkZone(filter, zone)
 end
 
 function Bich:addSpellAndSetName(zone, zoneName, unitid, unitName, spellid)
-    if BichDB[zone] == nil then
-        BichDB[zone] = {}
-    end
-    if BichDB[zone][unitid] == nil then
-        BichDB[zone][unitid] = {}
-    end
-    if BichDB[zone][unitid].spells == nil then
-        BichDB[zone][unitid].spells = {}
-    end
-    BichDB[zone].name = zoneName
-    BichDB[zone][unitid].name = unitName
-    if BichDB[zone][unitid].spells[spellid] then
-        return false
-    else
-        BichDB[zone][unitid].spells[spellid] = true
-        return true
-    end
+    self:addSpell(zone, unitid, spellid)
+    self:setZoneName(zone, zoneName)
+    self:setCreatureName(unitid, unitName)
 end
-
-
-
 
 function Bich:addSpell(zone, unitid, spellid)
     if BichDB[zone] == nil then
@@ -119,36 +115,89 @@ function Bich:addSpell(zone, unitid, spellid)
     if BichDB[zone][unitid] == nil then
         BichDB[zone][unitid] = {}
     end
-    if BichDB[zone][unitid].spells == nil then
-        BichDB[zone][unitid].spells = {}
-    end
-    if BichDB[zone][unitid].spells[spellid] then
+    if BichDB[zone][unitid][spellid] then
         return false
     else
-        BichDB[zone][unitid].spells[spellid] = true
+        BichDB[zone][unitid][spellid] = true
         return true
     end
 end
 
-function Bich:setZoneName(zone, name)
-    if BichDB[zone] == nil then
-        BichDB[zone] = {}
-    end
-    BichDB[zone].name = name
+function Bich:setZoneName(zone, name)   -- may be different when difficulty differs
+    BichAddition.zone[zone] = name
 end
 
-function Bich:setCreatureName(zone, unitid, name)
-    if BichDB[zone] == nil then
-        BichDB[zone] = {}
-    end
-    if BichDB[zone][unitid] == nil then
-        BichDB[zone][unitid] = {}
-    end
-    BichDB[zone][unitid].name = name
+function Bich:getZoneName(zone)
+    return BichAddition.zone[zone] or "Not Found."
 end
 
-function Bich:getAllInfo(zone, unitid)
+function Bich:setUnitName(unitid, name)
+    BichAddition.unit[unitid] = name
+end
+
+function Bich:getUnitName(unitid)
+    BichAddition.unit[unitid] = name
+end
+
+function Bich:getAllSpellInfo(zone, unitid)
     return BichDB[zone] and BichDB[zone][unitid] or {}
 end
 
+function Bich:getFilteredSpellInfo(zone, unitid, cmd)
+    rawInfo = BichDB[zone] and BichDB[zone][unitid] or {}
+    if cmd == "raw" then
+        return BichSpellFilter:raw(rawInfo)
+    elseif cmd == "sort" then
+        return BichSpellFilter:sort(rawInfo)
+    else
+        return BichSpellFilter:raw(rawInfo)
+    end
+end
+
+
+-- search
+function BichBar:getSpellNum(spells, id)
+    if type(spells) == "string" and type(id) == "number" then   -- can take zone and unitid or spell set
+        if BichDB[spells] ~= nil then
+            spells = BichDB[spells][id]
+        else
+            return nil
+        end
+    end
+    local count = 0
+    for spell, v in pairs(spells) do
+        if v == true then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+
+function Bich:search(cmd, param)
+    local result = {}
+    local condition = nil
+    if cmd == "num" or cmd == "number" then
+        condition = function (unitid, mobSpells, param)
+            local spellNum = #BichSpellFilter:raw(mobSpells)
+            return type(mobSpells) == "table" and spellNum > param
+        end
+    elseif cmd == "mob" or cmd == "creature" or cmd == "unit" then
+        condition = function (unitid, mobSpells, param) return unitid == param end
+    elseif cmd == "name" then
+        condition = function (unitid, mobSpells, param) return self:getUnitName(unitid) == param end
+    else
+        condition = function (unitid, mobSpells, param) return false end
+    end
+    
+    for zone, zoneInfo in pairs(BichDB) do
+        for unitid, mobSpells in pairs(zoneInfo) do
+            if condition(unitid, mobSpells, param) then
+                table.insert(result, {zone=zone, unitid=unitid, spells=BichSpellFilter:sort(mobSpells)})
+            end
+        end
+    end
+    return result
+end
+    
 ns.Bich = Bich

@@ -1,12 +1,13 @@
 ## Title: |cff00bfffBich|r, the Spell Tracker
 ## Notes: Mobs' Ability Tracker
-## Author: Bnkr, Inspired by Footrot/Sargeant
+## Author: Bnkrr, Inspired by Footrot/Sargeant
 
 ## Interface: 60200
-## Version: 0.4
-## SavedVariables: BichDB
+## Version: 0.5b
+## SavedVariables: BichDB, BichAddition
 
 config.lua
+spellfilter.lua
 db.lua
 bar.lua
 core.lua
