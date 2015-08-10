@@ -1,24 +1,37 @@
+2015-8-10 18:20
+New Version: 0.5b
+Change: Rewrite large amount of code.
+Change: Change DB structure. (Attention! Update to this version will clear all local data!) 
+Add: Add spellfilter.lua, which contains a spell filter aimimg to remove repeated spells in the future.
+Add: Slash command \bichsearchdb & \bs are added to search spells by name/unitid/number of spells
+
 2015-08-08 16:13
+New Version: 0.4
 Add: Shift + Left click will insert the spells to the chat input box.
 Change: Change anchor of GameTooltip. It's near the spell icon now.
 
 
 2015-08-08 15:34
+New Version: 0.3
 Change: Arrange spells in order of spellid. Will makes the spell bar more reading-friendly in some situations.
 
 
 2015-08-08 14:10
+New Version: 0.2
 Change: Change some caption in the code.
 
 
 2015-08-07 14:13
+New Version: 0.1
 First Release, Enjoy it!
 
 
----
+
+Todo List
+----
 todo: add some useful functions to search in database
 todo: filter enemies and friendly NPC
 todo: add click behavior of spell to show ItemRefTooltip
 todo: add CD tracker
-todo: remove duplicate spells (though they have different spellids)
+todo: remove repeated spells (though they have different spellids)
 todo: share spell information with others, API: SendAddonMessage()
