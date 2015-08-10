@@ -76,14 +76,47 @@ local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, source
     if not Bich:checkZone(fcfg.track) then
         return
     end
+    wwb = {171764,173009,173010}
+    local f = false
+    for i, v in ipairs(wwb) do
+        if v == select(1,...) then
+            f = true
+        end
+    end
+    if f == false then
+        if select(1,...) ~= nil then
+            local l = select(1,...)
+            print(sourceName)
+            DEFAULT_CHAT_FRAME:AddMessage(event..":"..GetSpellLink(l), 255, 255, 255)
+        end
+    end
+    -- if sourceName == "薇薇安" then
+        -- wwa = wwa or {}
+        -- local e = event..":"..tostring(select(1, ...))
+        -- local f = false
+        -- for i, v in ipairs(wwa) do
+            -- if v == e then
+                -- f = true
+            -- end
+        -- end
+        -- if f == false then
+            -- table.insert(wwa, e)
+        -- end
+        -- DEFAULT_CHAT_FRAME:AddMessage("{", 255, 255, 255)
+        -- for i, v in ipairs(wwa) do
+            -- DEFAULT_CHAT_FRAME:AddMessage(v, 255, 255, 255)
+        -- end
+        -- DEFAULT_CHAT_FRAME:AddMessage("}", 255, 255, 255)
+        
+    -- end
     if event == "SPELL_HEAL" or event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" then
         local spellid = select(1, ...)
         local unitid = Bich:getCreatureIdByGuid(sourceGUID)
         local zone, zoneName = Bich:getZone()
-        
         if unitid > 0 then
             local newSpell = Bich:addSpellAndSetName(zone, zoneName, unitid, sourceName, spellid)
-            if unitid == Bich:getCreatureIdByGuid(UnitGUID("target")) and newSpell then
+            local tarGuid = UnitGUID("target")
+            if unitid == Bich:getCreatureIdByGuid(tarGuid) and newSpell then
                 unitCreateBar("target")
             end
         end

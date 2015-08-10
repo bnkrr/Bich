@@ -65,6 +65,7 @@ end
 
 
 function Bich:getCreatureIdByGuid(guid)
+    if guid == nil then return -1 end
     local utype, _, server, instance, zone, id, suid = strsplit("-", guid)
     if utype == "Creature" or utype == "Vehicle" then
         return tonumber(id)
