@@ -1,9 +1,9 @@
--- database functions, method: class Bich, data: BichDB, BichAddition
+-- only contains database functions, method: class Bich, data: BichDB, BichAddition
 local addon, ns = ...
 local BichSpellFilter = ns.BichSpellFilter
 
 BichDB = BichDB or {}       -- only store spell info
-BichDBVersion = 1     -- BichAddition save creature id, names, zone names, zone id
+local BichDBVersion = 1     -- BichAddition save creature id, names, zone names, zone id
 local Bich = {
     instanceType = {
         [0] = "None",
@@ -53,7 +53,7 @@ local Bich = {
 }
 
 function Bich:checkVersion()
-    if BichAddition == nil or BichAddition.version != BichDBVersion then
+    if BichAddition == nil or BichAddition.version ~= BichDBVersion then
         BichDB = {}
         BichAddition = { 
             version = BichDBVersion,
@@ -105,7 +105,7 @@ end
 function Bich:addSpellAndSetName(zone, zoneName, unitid, unitName, spellid)
     self:addSpell(zone, unitid, spellid)
     self:setZoneName(zone, zoneName)
-    self:setCreatureName(unitid, unitName)
+    self:setUnitName(unitid, unitName)
 end
 
 function Bich:addSpell(zone, unitid, spellid)
@@ -136,7 +136,7 @@ function Bich:setUnitName(unitid, name)
 end
 
 function Bich:getUnitName(unitid)
-    BichAddition.unit[unitid] = name
+    return BichAddition.unit[unitid] or "Not Found."
 end
 
 function Bich:getAllSpellInfo(zone, unitid)
@@ -144,7 +144,7 @@ function Bich:getAllSpellInfo(zone, unitid)
 end
 
 function Bich:getFilteredSpellInfo(zone, unitid, cmd)
-    rawInfo = BichDB[zone] and BichDB[zone][unitid] or {}
+    local rawInfo = BichDB[zone] and BichDB[zone][unitid] or {}
     if cmd == "raw" then
         return BichSpellFilter:raw(rawInfo)
     elseif cmd == "sort" then
@@ -156,26 +156,8 @@ end
 
 
 -- search
-function BichBar:getSpellNum(spells, id)
-    if type(spells) == "string" and type(id) == "number" then   -- can take zone and unitid or spell set
-        if BichDB[spells] ~= nil then
-            spells = BichDB[spells][id]
-        else
-            return nil
-        end
-    end
-    local count = 0
-    for spell, v in pairs(spells) do
-        if v == true then
-            count = count + 1
-        end
-    end
-    return count
-end
-
 
 function Bich:search(cmd, param)
-    local result = {}
     local condition = nil
     if cmd == "num" or cmd == "number" then
         condition = function (unitid, mobSpells, param)
@@ -190,6 +172,7 @@ function Bich:search(cmd, param)
         condition = function (unitid, mobSpells, param) return false end
     end
     
+    local result = {}
     for zone, zoneInfo in pairs(BichDB) do
         for unitid, mobSpells in pairs(zoneInfo) do
             if condition(unitid, mobSpells, param) then

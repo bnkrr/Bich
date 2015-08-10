@@ -12,7 +12,9 @@ function BichSpellFilter:raw(spells)
 end
 
 function BichSpellFilter:sort(spells)
-    return table.sort(self:raw(spells))
+    local spellList = self:raw(spells)
+    table.sort(spellList)
+    return spellList
 end
 
 ns.BichSpellFilter = BichSpellFilter

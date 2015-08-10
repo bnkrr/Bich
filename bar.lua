@@ -1,6 +1,7 @@
+-- only contains frontend (spell bar) functions
+
 local addon, ns = ...
 local bcfg = ns.cfg.barConfig
-
 
 local BichBar = CreateFrame("Frame", "BichSpellBar", UIParent)
 
@@ -101,51 +102,6 @@ function BichBar:createBar(spells)
     end
 end
 
-
-function BichBar:createBarUnit(flag)--"target"
-    local unitid = Bich:getCreatureIdByGuid(UnitGUID(flag))
-    local zone = Bich:getZone()
-    local spells = Bich:getFilteredSpellInfo(zone, unitid, "sort")
-    if next(spells) ~= nil then
-        local name = UnitName(flag)
-        Bich:setUnitName(unitid, name)
-        self:createBar(spells)
-        --  for debug
-        --BichBar:printMobInfoToChat({zone=zone, unitid=unitid, spells=spells})
-    end
-end
-
---debug functions
-
-
-function BichBar:printMobInfoToChat(mobInfo)
-    local name = Bich:getUnitName(mobInfo.unitid)
-    
-    local msg = ""
-    for i, spellid in ipairs(spellsort) do
-        msg = msg .. GetSpellLink(spellid)
-    end
-
-    DEFAULT_CHAT_FRAME:AddMessage(name .. ":" .. msg, 255, 255, 255)
-end
-
-function BichBar:printSearchResultToChat(limit)
-    limit = limit or #self.searchResult -- no limit by default
-    for i, mobInfo in ipairs(self.searchResult) do
-        if i <= limit then
-            self:printMobInfoToChat(mobInfo)
-        end
-    end
-end
-
-function BichBar:searchAndShow(cmd, param)
-    self.searchResult = Bich:search(cmd, param)
-    if #self.searchResult > 0 then
-        local randomChoosen = self.searchResult[ math.random(1,#self.searchResult) ]
-        self:createBar(randomChoosen.spells)
-        self:printSearchResultToChat()
-    end
-end
 
 BichBar:init()
 ns.BichBar = BichBar

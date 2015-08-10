@@ -1,4 +1,7 @@
-2015-8-10 18:20
+2015-08-10 22:27
+Change: Bugfixes.
+
+2015-08-10 18:20
 New Version: 0.5b
 Change: Rewrite large amount of code.
 Change: Change DB structure. (Attention! Update to this version will clear all local data!) 

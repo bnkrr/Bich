@@ -1,4 +1,4 @@
-## Title: |cff00bfffBich|r, the Spell Tracker
+## Title: |cff00f0f0Bich|r, the Spell Tracker
 ## Notes: Mobs' Ability Tracker
 ## Author: Bnkrr, Inspired by Footrot/Sargeant
 

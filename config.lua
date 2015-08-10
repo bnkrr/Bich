@@ -27,7 +27,7 @@ barConfig.perRow = nil
 
 -- anchor of tooltip of spells. avialable value:
 -- ANCHOR_NONE, ANCHOR_CURSOR, ANCHOR_BOTTOMLEFT, ANCHOR_BOTTOMRIGHT, ANCHOR_LEFT, ANCHOR_RIGHT, ANCHOR_TOPLEFT, ANCHOR_TOPRIGHT
-barConfig.tooltipAnchor = "ANCHOR_NONE"
+barConfig.tooltipAnchor = "ANCHOR_CURSOR"
 
 -- icon size
 barConfig.button = {
