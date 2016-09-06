@@ -68,7 +68,26 @@ local function unitCreateBar(flag)
     end
 end
 
+local function m_GetSpellLink(l)
+    if GetSpellLink(l) then
+        return GetSpellLink(l)
+    else
+        return l
+    end
+end
 
+local function m_legalString(str)
+    if type(str)  == "string" then
+        return str
+    elseif type(str) == "number" then
+        return string.format("[%d]", str)
+    elseif type(str) == "nil" then
+        return "nil"
+    else
+        return type(str)
+    end
+end
+    
 -- store spell information
 local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, 
                                 sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
@@ -76,40 +95,13 @@ local function handlerCombatLog(timeStamp, event, hideCaster, sourceGUID, source
     if not Bich:checkZone(fcfg.track) then
         return
     end
-    wwb = {171764,173009,173010}
-    local f = false
-    for i, v in ipairs(wwb) do
-        if v == select(1,...) then
-            f = true
-        end
-    end
-    if f == false then
-        if select(1,...) ~= nil then
-            local l = select(1,...)
-            print(sourceName)
-            DEFAULT_CHAT_FRAME:AddMessage(event..":"..GetSpellLink(l), 255, 255, 255)
-        end
-    end
-    -- if sourceName == "薇薇安" then
-        -- wwa = wwa or {}
-        -- local e = event..":"..tostring(select(1, ...))
-        -- local f = false
-        -- for i, v in ipairs(wwa) do
-            -- if v == e then
-                -- f = true
-            -- end
-        -- end
-        -- if f == false then
-            -- table.insert(wwa, e)
-        -- end
-        -- DEFAULT_CHAT_FRAME:AddMessage("{", 255, 255, 255)
-        -- for i, v in ipairs(wwa) do
-            -- DEFAULT_CHAT_FRAME:AddMessage(v, 255, 255, 255)
-        -- end
-        -- DEFAULT_CHAT_FRAME:AddMessage("}", 255, 255, 255)
-        
+
+    -- if select(1,...) ~= nil and not string.find(event, "^SWING") then   -- "SWING_xxx" events dont have spell id.
+        -- local l = select(1,...)
+        -- DEFAULT_CHAT_FRAME:AddMessage(event..":"..m_legalString(sourceName)..":"..m_GetSpellLink(l), 255, 255, 255)
     -- end
-    if event == "SPELL_HEAL" or event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" then
+
+    if event == "SPELL_HEAL" or event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" or event == "SPELL_PERIODIC_DAMAGE" or event == "SPELL_MISSED" then
         local spellid = select(1, ...)
         local unitid = Bich:getCreatureIdByGuid(sourceGUID)
         local zone, zoneName = Bich:getZone()

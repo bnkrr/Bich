@@ -1,3 +1,10 @@
+2016-09-06 11:24
+Change: Some bug fix.
+
+2016-09-05 16:59
+Change: Change toc file. Update the version field to 70000.
+Add: Add some instance difficulty id.
+
 2015-08-10 22:27
 Change: Bugfixes.
 

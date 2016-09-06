@@ -2,8 +2,8 @@
 ## Notes: Mobs' Ability Tracker
 ## Author: Bnkrr, Inspired by Footrot/Sargeant
 
-## Interface: 60200
-## Version: 0.5b
+## Interface: 70000
+## Version: 0.6
 ## SavedVariables: BichDB, BichAddition
 
 config.lua
