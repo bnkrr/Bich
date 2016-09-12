@@ -1,3 +1,7 @@
+--[[
+some core function. event handler, etc.
+]] 
+
 local addon, ns = ...
 local gEnable = ns.cfg.enable
 local fcfg = ns.cfg.filterConfig
@@ -68,6 +72,7 @@ local function unitCreateBar(flag)
     end
 end
 
+-- debug function
 local function m_GetSpellLink(l)
     if GetSpellLink(l) then
         return GetSpellLink(l)
@@ -125,7 +130,7 @@ local function handlerTargetChanged()
     unitCreateBar("target")
 end
 
--- save BichDB after logout
+-- save BichDB after logout. with filter
 local function handlerPlayerLogout()
     for zone, _ in pairs(BichDB) do
         if not Bich:checkZone(fcfg.save, zone) then

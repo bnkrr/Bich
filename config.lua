@@ -1,3 +1,8 @@
+--[[
+config file
+object: ns.cfg
+]] 
+
 local addon, ns = ...
 local cfg = {}
 local barConfig = {}

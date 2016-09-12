@@ -1,3 +1,9 @@
+--[[
+Some spells will generate many similar spell effects, with similar spellid, same icon and same description. These spellid should be saved in database but not shown in spell bar. this file implements spellfilter to filter all spell icon in database, and show some of them.
+
+ns.BichSpellFilter
+]]
+
 local addon, ns = ...
 
 local BichSpellFilter = {}
@@ -33,6 +39,16 @@ function BichSpellFilter:delNoCd(spells)   ---delete the spell with same icon an
                 end
             end
         end
+    end
+end
+
+function BichSpellFilter:isSameSpell(spellid1, spellid2)
+    local name1, _, icon1 = GetSpellInfo(spellid1)
+    local name2, _, icon2 = GetSpellInfo(spellid2)
+    if name1 == name2 and icon1 == icon2 then
+        return true
+    else
+        return false
     end
 end
 

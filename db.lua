@@ -1,4 +1,8 @@
--- only contains database functions, method: class Bich, data: BichDB, BichAddition
+--[[
+only contains database functions
+object: ns.Bich
+data: BichDB, BichAddition
+]]
 local addon, ns = ...
 local BichSpellFilter = ns.BichSpellFilter
 

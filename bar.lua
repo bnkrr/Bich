@@ -1,4 +1,7 @@
--- only contains frontend (spell bar) functions
+--[[
+only contains frontend (spell bar) functions
+object: ns.BichBar
+]]
 
 local addon, ns = ...
 local bcfg = ns.cfg.barConfig
